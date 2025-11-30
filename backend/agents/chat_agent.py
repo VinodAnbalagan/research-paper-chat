@@ -74,33 +74,38 @@ You: "Cross-entropy is better suited for classification tasks like next-token pr
         Returns:
             Chat response
         """
-        # Build conversation history
-        messages = []
-        
-        # Add paper context as initial system message via first user message
-        context_msg = f"""I'm reading a research paper. Here's the relevant content:
+        try:
+            # Build enhanced system instruction with paper context
+            enhanced_instruction = f"""{self.system_instruction}
 
-{paper_content[:3000]}
+**Paper Content for Reference:**
+{paper_content[:2000]}
 
-{f'(Currently discussing the {section} section)' if section else ''}
-
-I'll ask you questions about it."""
-        
-        messages.append({"role": "user", "content": context_msg})
-        messages.append({"role": "assistant", "content": "I've reviewed the paper content. Feel free to ask any questions!"})
-        
-        # Add conversation history
-        if history:
-            messages.extend(history)
-        
-        # Add current query
-        messages.append({"role": "user", "content": query})
-        
-        # Get response
-        response = self.client.chat(
-            messages,
-            system_instruction=self.system_instruction,
-            temperature=0.7
-        )
-        
-        return response
+{f'**Current Section:** {section}' if section else ''}
+"""
+            
+            # Build conversation history - only include actual conversation
+            messages = []
+            
+            # Add previous conversation if exists
+            if history and len(history) > 0:
+                # Only include last 5 exchanges to prevent context overflow
+                messages.extend(history[-10:])  # Last 5 user-assistant pairs
+            
+            # Add current query
+            messages.append({"role": "user", "content": query})
+            
+            # Get response with enhanced system instruction
+            response = self.client.chat(
+                messages,
+                system_instruction=enhanced_instruction,
+                temperature=0.7
+            )
+            
+            return response
+            
+        except Exception as e:
+            # Return user-friendly error message
+            import logging
+            logging.error(f"Chat error: {e}")
+            return "I apologize, but I encountered an error processing your question. This might be due to API rate limits or a temporary service issue. Please try again in a moment, or rephrase your question."

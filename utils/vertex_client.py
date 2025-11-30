@@ -99,6 +99,12 @@ class GeminiClient:
             try:
                 return response.text
             except ValueError as ve:
+                logger.error(f"Could not extract text from chat response: {ve}")
+                return "I apologize, but I encountered an issue generating a response. Please try rephrasing your question."
+            except AttributeError:
+                logger.error("Response has no text attribute")
+                return "I apologize, but I received an invalid response. Please try again."
+            except ValueError as ve:
                 logger.error(f"Could not extract text from response: {ve}")
                 return "I apologize, but I encountered an issue generating a response. Please try again with a different section or question."
             
@@ -184,7 +190,15 @@ class GeminiClient:
             
         except Exception as e:
             logger.error(f"Error in chat: {e}")
-            raise
+            # Handle specific API errors gracefully
+            import google.api_core.exceptions
+            if isinstance(e, google.api_core.exceptions.InternalServerError):
+                return "I apologize, but the AI service is temporarily unavailable. This is usually a brief issue. Please try again in a moment."
+            elif isinstance(e, google.api_core.exceptions.ResourceExhausted):
+                return "I apologize, but we've hit the API rate limit. Please wait a moment and try again."
+            else:
+                # For other errors, provide a generic message
+                return "I apologize, but I encountered an unexpected error. Please try rephrasing your question or try again later."
 
 
 # Global client instance
