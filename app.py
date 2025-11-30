@@ -12,6 +12,19 @@ from pathlib import Path
 # Load environment variables
 load_dotenv()
 
+# IMPORTANT: For Streamlit Cloud, also load from st.secrets
+# Streamlit Cloud doesn't use .env files, it uses secrets
+if not os.getenv("GOOGLE_API_KEY"):
+    try:
+        # Try to load from Streamlit secrets
+        if "GOOGLE_API_KEY" in st.secrets:
+            os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
+        if "APP_MODE" in st.secrets:
+            os.environ["APP_MODE"] = st.secrets["APP_MODE"]
+    except:
+        # If secrets don't exist (local dev without secrets.toml), that's ok
+        pass
+
 # Import our modules
 from tools.pdf_parser import PaperParser
 from backend.mode_handler import ModeHandler
