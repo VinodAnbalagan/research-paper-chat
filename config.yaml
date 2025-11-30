@@ -1,0 +1,72 @@
+# Research Paper Chat Configuration
+
+app:
+  name: "Research Paper Chat"
+  version: "1.0.0"
+  description: "Multi-agent system for understanding research papers"
+
+# Model configuration
+model:
+  name: "gemini-2.0-flash"
+  temperature: 0.7
+  max_tokens: 8192
+
+# Sample papers (pre-loaded)
+sample_papers:
+  - id: "attention"
+    title: "Attention Is All You Need"
+    authors: "Vaswani et al."
+    year: 2017
+    arxiv_id: "1706.03762"
+    file: "attention_is_all_you_need.pdf"
+    description: "Introduces the Transformer architecture"
+    
+  - id: "dqn"
+    title: "Playing Atari with Deep Reinforcement Learning"
+    authors: "Mnih et al."
+    year: 2013
+    arxiv_id: "1312.5602"
+    file: "dqn_atari.pdf"
+    description: "Deep Q-Networks for game playing"
+    
+  - id: "alexnet"
+    title: "ImageNet Classification with Deep CNNs"
+    authors: "Krizhevsky et al."
+    year: 2012
+    file: "alexnet.pdf"
+    description: "AlexNet - breakthrough in computer vision"
+
+# Agent specializations
+agents:
+  math:
+    focus: "equations, proofs, mathematical intuition"
+    triggers:
+      - "equation"
+      - "formula"
+      - "proof"
+      - "theorem"
+      - "mathematical"
+      
+  code:
+    focus: "algorithms, pseudocode, implementation"
+    triggers:
+      - "algorithm"
+      - "implementation"
+      - "code"
+      - "pseudocode"
+      - "procedure"
+      
+  concept:
+    focus: "high-level ideas, architecture, motivation"
+    triggers:
+      - "architecture"
+      - "motivation"
+      - "intuition"
+      - "overview"
+      - "concept"
+
+# UI Configuration
+ui:
+  theme: "light"
+  sidebar_width: 300
+  max_upload_size_mb: 10

@@ -1,0 +1,14 @@
+# Core dependencies
+streamlit==1.51.0
+python-dotenv==1.2.1
+PyYAML==6.0.2
+
+# Google AI
+google-generativeai==0.8.5
+
+# PDF processing
+pdfplumber==0.11.8
+
+# Data handling (required by streamlit)
+pandas==2.3.3
+numpy==2.3.5
