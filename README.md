@@ -6,7 +6,7 @@ A modern, intelligent system that helps researchers understand complex papers th
 
 **Built for Google's 5-Day AI Agents Intensive - Capstone Project**
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-url.streamlit.app)
+Try the live demo : [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://vinodanbalagan-research-paper-chat-app-x3nxo4.streamlit.app/)
 
 ![Modern UI](https://img.shields.io/badge/UI-Modern%20%26%20Minimalistic-blue)
 ![AI Powered](https://img.shields.io/badge/AI-Google%20Gemini-purple)
@@ -47,10 +47,6 @@ Agent Agent Agent
    Quiz/Chat
 ```
 
-## 📚 Sample Papers Included
-
-1. **Attention Is All You Need** (Transformers) - Vaswani et al., 2017
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -79,7 +75,7 @@ cp .env.example .env
 
 ### Get Your Free API Key
 
-1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+1. Go to Google AI Studio
 2. Sign in with your Google account
 3. Click "Create API Key"
 4. Copy the key
@@ -312,7 +308,6 @@ Contributions welcome! Please:
 **Vinod Anbalagan**
 
 - Substack: [Gradient Ascent](https://substack.com/@vinodanbalagan)
-- GitHub: [https://github.com/VinodAnbalagan]
 
 ---
 
