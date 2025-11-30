@@ -6,7 +6,7 @@ A modern, intelligent system that helps researchers understand complex papers th
 
 **Built for Google's 5-Day AI Agents Intensive - Capstone Project**
 
-Try the live streamlit demo : ![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://vinodanbalagan-research-paper-chat-app-x3nxo4.streamlit.app/)
+Try the live demo : [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://vinodanbalagan-research-paper-chat-app-x3nxo4.streamlit.app/)
 
 [![Watch the Live Demo](https://img.shields.io/badge/Watch%20Demo-red?logo=youtube&style=flat&logoColor=white)](https://youtu.be/vmrn7zhfwQY)
 
