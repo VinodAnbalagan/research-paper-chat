@@ -275,7 +275,7 @@ Watch the full demo: [YouTube Link]()
 
 ## 📝 Blog Post
 
-Read the full technical writeup: [Gradient Ascent on Substack](https://substack.com/@vinodanbalagan)
+Read the full technical writeup: [The Meta Gradient on Substack](https://substack.com/@vinodanbalagan)
 
 ## 🔮 Future Enhancements
 
@@ -305,11 +305,6 @@ Contributions welcome! Please:
 2. Create a feature branch
 3. Submit a pull request
 
-## 📧 Contact
-
-**Vinod Anbalagan**
-
-- Substack: [Gradient Ascent](https://substack.com/@vinodanbalagan)
 
 ---
 
