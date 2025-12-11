@@ -74,13 +74,21 @@ class ModeHandler:
                     "cached": True
                 }
             
-            # If no cache hit, explain why and suggest live mode
+            # If no cache hit, provide helpful guidance
             logger.warning(f"No cached response for {paper_id}/{query_type}")
-            return {
-                "response": "⚠️ This query is not available in demo mode. Switch to Live mode to use the AI agents.",
-                "mode": "demo",
-                "cached": False
-            }
+            
+            if paper_id == "attention":
+                return {
+                    "response": "This paper has comprehensive demo content available! Try clicking the buttons above to see pre-computed analysis, or switch to Live mode to ask custom questions with your own API key.",
+                    "mode": "demo",
+                    "cached": False
+                }
+            else:
+                return {
+                    "response": f"Demo responses are currently only available for 'Attention Is All You Need'. For the {paper_id} paper, please switch to Live mode and add your Google AI Studio API key to get AI-powered analysis.",
+                    "mode": "demo", 
+                    "cached": False
+                }
         
         # Live mode - use actual agents
         if not self.manager:
@@ -145,6 +153,20 @@ class ModeHandler:
                     "response": cached_response,
                     "mode": "demo",
                     "cached": True
+                }
+            
+            # For attention paper, provide helpful guidance
+            if paper_id == "attention":
+                return {
+                    "response": "For the best demo experience with 'Attention Is All You Need', try clicking one of the sample questions above! They provide comprehensive answers about the Transformer architecture. For custom questions, switch to Live mode with your own API key.",
+                    "mode": "demo",
+                    "cached": False
+                }
+            else:
+                return {
+                    "response": f"Chat responses are currently only available in demo mode for 'Attention Is All You Need'. For the {paper_id} paper, please switch to Live mode and add your API key.",
+                    "mode": "demo",
+                    "cached": False
                 }
         
         # Live mode - use chat agent
