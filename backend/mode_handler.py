@@ -84,7 +84,16 @@ class ModeHandler:
         
         # Live mode - use actual agents
         if not self.manager:
-            self.manager = ManagerAgent()
+            try:
+                self.manager = ManagerAgent()
+            except ValueError as e:
+                # API key not configured
+                return {
+                    "response": "⚠️ API key not configured. Please add your Google AI Studio API key in the sidebar to use Live mode.",
+                    "mode": "live",
+                    "cached": False,
+                    "error": str(e)
+                }
         
         result = self.manager.process_query(
             query,

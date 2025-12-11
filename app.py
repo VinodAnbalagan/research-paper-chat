@@ -164,36 +164,108 @@ with st.sidebar:
     st.markdown("*AI-Powered Paper Analysis*")
     st.markdown("---")
     
-    # Set to Live mode only
-    if st.session_state.mode_handler.mode != "live":
-        st.session_state.mode_handler.set_mode("live")
+    # Mode selection
+    st.markdown("#### 🎮 Choose Mode")
     
-    # Paper upload section
-    st.markdown("#### 📄 Upload Paper")
+    mode_options = {
+        "demo": "🎯 Demo Mode (No API Key Needed)",
+        "live": "⚡ Live Mode (Bring Your Own Key)"
+    }
     
-    uploaded_file = st.file_uploader(
-        "Choose a PDF file",
-        type=['pdf'],
-        help="Upload any research paper in PDF format",
-        label_visibility="collapsed"
+    selected_mode = st.radio(
+        "Select Mode:", 
+        list(mode_options.keys()), 
+        format_func=lambda x: mode_options[x],
+        index=0  # Default to demo mode
     )
     
-    if uploaded_file:
-        if st.button("🚀 Process Paper", use_container_width=True):
-            with st.spinner("Processing..."):
-                # Save temporarily
-                temp_path = f"temp_{uploaded_file.name}"
-                with open(temp_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                
-                st.session_state.current_paper = {
-                    "id": "uploaded",
-                    "title": uploaded_file.name,
-                    "file": temp_path
-                }
-                st.session_state.paper_parser = PaperParser(temp_path)
+    # Set mode based on selection
+    if st.session_state.mode_handler.mode != selected_mode:
+        st.session_state.mode_handler.set_mode(selected_mode)
+    
+    # Paper selection based on mode
+    if selected_mode == "demo":
+        st.markdown("#### 📚 Sample Papers")
+        
+        sample_papers = config['sample_papers']
+        paper_titles = [f"{p['title']} ({p['year']})" for p in sample_papers]
+        
+        selected_idx = st.selectbox(
+            "Choose a paper:",
+            range(len(paper_titles)),
+            format_func=lambda i: paper_titles[i]
+        )
+        
+        if st.button("📖 Load Sample Paper", use_container_width=True):
+            paper = sample_papers[selected_idx]
+            paper_path = f"data/sample_papers/{paper['file']}"
+            
+            if os.path.exists(paper_path):
+                st.session_state.current_paper = paper
+                st.session_state.paper_parser = PaperParser(paper_path)
                 st.session_state.chat_history = []
-                st.success("✓ Paper loaded successfully!")
+                st.success("✓ Sample paper loaded!")
+            else:
+                st.error("❌ Sample paper not found")
+    
+    else:  # Live mode
+        st.markdown("#### 📄 Upload Your Paper")
+        
+        uploaded_file = st.file_uploader(
+            "Choose a PDF file",
+            type=['pdf'],
+            help="Upload any research paper in PDF format",
+            label_visibility="collapsed"
+        )
+        
+        if uploaded_file:
+            # Check if API key is available
+            api_key = os.getenv("GOOGLE_API_KEY")
+            if not api_key or api_key == "your-api-key-here":
+                st.error("⚠️ Please add your API key above first")
+            else:
+                if st.button("🚀 Process Paper", use_container_width=True):
+                    with st.spinner("Processing..."):
+                        # Save temporarily
+                        temp_path = f"temp_{uploaded_file.name}"
+                        with open(temp_path, "wb") as f:
+                            f.write(uploaded_file.getbuffer())
+                        
+                        st.session_state.current_paper = {
+                            "id": "uploaded",
+                            "title": uploaded_file.name,
+                            "file": temp_path
+                        }
+                        st.session_state.paper_parser = PaperParser(temp_path)
+                        st.session_state.chat_history = []
+                        st.success("✓ Paper loaded successfully!")
+    
+    st.markdown("---")
+    
+    # API Key Configuration for Live Mode
+    if selected_mode == "live":
+        st.markdown("#### 🔑 Your API Key")
+        st.markdown("Get free key: [Google AI Studio →](https://aistudio.google.com/app/apikey)")
+        
+        user_api_key = st.text_input(
+            "Paste your API key here:",
+            type="password",
+            help="Your key is never stored. Only used in your browser session.",
+            placeholder="AIzaSy..."
+        )
+        
+        if user_api_key:
+            os.environ["GOOGLE_API_KEY"] = user_api_key
+            st.success("✅ API Key Connected!")
+            st.caption("You can now upload custom PDFs")
+        else:
+            st.warning("⚠️ Live mode requires an API key")
+            st.caption("Free tier: 15 req/min, 1500 req/day")
+    
+    elif selected_mode == "demo":
+        st.markdown("#### 🎯 Demo Mode Active")
+        st.success("✅ Using Pre-computed Responses")
+        st.caption("Try with sample papers below")
     
     st.markdown("---")
     
@@ -203,16 +275,6 @@ with st.sidebar:
         st.info(st.session_state.current_paper['title'])
     
     st.markdown("---")
-    
-    # API status
-    st.markdown("#### ⚡ Status")
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if api_key and api_key != "your-api-key-here":
-        st.success("✓ API Connected")
-        st.caption("Powered by Google Gemini AI")
-    else:
-        st.error("✗ API key not configured")
-        st.caption("[Get your free key](https://aistudio.google.com/app/apikey)")
     
     st.markdown("---")
     
@@ -228,70 +290,54 @@ if st.session_state.current_paper is None:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Feature cards
-    col1, col2, col3 = st.columns(3)
+    # Two modes explanation
+    col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 24px; border-radius: 12px; color: white; text-align: center;'>
-            <h3 style='color: white; margin: 0;'>🤖 AI Agents</h3>
-            <p style='margin: 8px 0 0 0; opacity: 0.9;'>Specialized agents for Math, Code, and Concepts</p>
+            <h3 style='color: white; margin: 0;'>🎯 Demo Mode</h3>
+            <p style='margin: 8px 0 0 0; opacity: 0.9;'>Try with 3 sample papers<br>No API key needed</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
         <div style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 24px; border-radius: 12px; color: white; text-align: center;'>
-            <h3 style='color: white; margin: 0;'>💬 Smart Chat</h3>
-            <p style='margin: 8px 0 0 0; opacity: 0.9;'>Interactive Q&A with context awareness</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style='background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 24px; border-radius: 12px; color: white; text-align: center;'>
-            <h3 style='color: white; margin: 0;'>❓ Quiz Gen</h3>
-            <p style='margin: 8px 0 0 0; opacity: 0.9;'>Auto-generate study questions</p>
+            <h3 style='color: white; margin: 0;'>⚡ Live Mode</h3>
+            <p style='margin: 8px 0 0 0; opacity: 0.9;'>Upload any paper<br>Bring your own API key</p>
         </div>
         """, unsafe_allow_html=True)
     
     st.markdown("<br><br>", unsafe_allow_html=True)
     
-    # How it works
-    st.markdown("### 🚀 How It Works")
+    # Features
+    st.markdown("### 🤖 AI Agents")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("""
-        **1. Upload**  
-        Drop your research paper PDF in the sidebar
-        """)
+        st.markdown("**🧮 Math Agent**  \nEquations & Proofs")
     
     with col2:
-        st.markdown("""
-        **2. Analyze**  
-        Choose an AI agent or start chatting
-        """)
+        st.markdown("**💻 Code Agent**  \nAlgorithms & Implementation")
     
     with col3:
-        st.markdown("""
-        **3. Learn**  
-        Get instant explanations and insights
-        """)
+        st.markdown("**🎯 Concept Agent**  \nIdeas & Architecture")
     
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Call to action
-    st.info("👈 **Get Started:** Upload a PDF from the sidebar to begin!")
+    st.info("👈 **Get Started:** Choose a mode in the sidebar!")
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Powered by
+    # API key info
     st.markdown("""
     <div style='text-align: center; padding: 24px; background-color: #F9FAFB; border-radius: 12px;'>
-        <p style='color: #6B7280; margin: 0;'>Powered by</p>
-        <h3 style='color: #4F46E5; margin: 8px 0 0 0;'>Google Gemini AI</h3>
+        <p style='color: #6B7280; margin: 0;'>Need an API key for Live mode?</p>
+        <p style='color: #4F46E5; margin: 8px 0 0 0;'><a href="https://aistudio.google.com/app/apikey" target="_blank">Get Free Google AI Studio Key →</a></p>
+        <p style='color: #9CA3AF; margin: 4px 0 0 0; font-size: 0.875rem;'>15 requests/min, 1500/day - completely free!</p>
     </div>
     """, unsafe_allow_html=True)
     

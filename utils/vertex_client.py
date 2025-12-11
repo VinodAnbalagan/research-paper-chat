@@ -23,7 +23,7 @@ class GeminiClient:
             model_name: Model to use
         """
         self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
-        if not self.api_key:
+        if not self.api_key or self.api_key == "your-api-key-here":
             raise ValueError("GOOGLE_API_KEY not found in environment")
         
         genai.configure(api_key=self.api_key)
